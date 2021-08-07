@@ -60,7 +60,7 @@ class Airport
   }
 
   public function setCreatedAt(DateTimeImmutable $createdAt): self {
-    $this->createdAt = $CreatedAt;
+    $this->createdAt = $createdAt;
 
     return $this;
   }
