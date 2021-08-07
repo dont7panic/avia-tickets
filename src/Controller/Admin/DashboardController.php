@@ -2,6 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Airport;
+use App\Entity\Flight;
+use App\Entity\Plane;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -28,6 +31,8 @@ class DashboardController extends AbstractDashboardController
 
   public function configureMenuItems(): iterable {
     yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
-    // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+    yield MenuItem::linkToCrud('Flights', 'fas fa-list', Flight::class);
+    yield MenuItem::linkToCrud('Planes', 'fas fa-list', Plane::class);
+    yield MenuItem::linkToCrud('Airports', 'fas fa-list', Airport::class);
   }
 }
