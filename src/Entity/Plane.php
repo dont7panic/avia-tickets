@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PlaneRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,12 +34,21 @@ class Plane
   /**
    * @ORM\Column(type="datetime_immutable")
    */
-  private $CreatedAt;
+  private $createdAt;
 
   /**
    * @ORM\Column(type="datetime_immutable", nullable=true)
    */
-  private $UpdatedAt;
+  private $updatedAt;
+
+  /**
+   * @ORM\OneToMany(targetEntity=Flight::class, mappedBy="plane")
+   */
+  private $flights;
+
+  public function __construct() {
+    $this->flights = new ArrayCollection();
+  }
 
   public function getId(): ?int {
     return $this->id;
@@ -64,21 +75,21 @@ class Plane
   }
 
   public function getCreatedAt(): ?DateTimeImmutable {
-    return $this->CreatedAt;
+    return $this->createdAt;
   }
 
-  public function setCreatedAt(DateTimeImmutable $CreatedAt): self {
-    $this->CreatedAt = $CreatedAt;
+  public function setCreatedAt(DateTimeImmutable $createdAt): self {
+    $this->createdAt = $createdAt;
 
     return $this;
   }
 
   public function getUpdatedAt(): ?DateTimeImmutable {
-    return $this->UpdatedAt;
+    return $this->updatedAt;
   }
 
-  public function setUpdatedAt(?DateTimeImmutable $UpdatedAt): self {
-    $this->UpdatedAt = $UpdatedAt;
+  public function setUpdatedAt(?DateTimeImmutable $updatedAt): self {
+    $this->updatedAt = $updatedAt;
 
     return $this;
   }
@@ -87,18 +98,41 @@ class Plane
    * @ORM\PrePersist
    */
 
-  public function setCreatedTimestamp() {
+  public function setCreatedTimestamp(): void {
     $this->setCreatedAt(new DateTimeImmutable('now'));
-
-    return $this;
   }
 
   /**
    * @ORM\PreUpdate
    */
 
-  public function setUpdatedTimestamp() {
+  public function setUpdatedTimestamp(): void {
     $this->setUpdatedAt(new DateTimeImmutable('now'));
+  }
+
+  /**
+   * @return Collection|Flight[]
+   */
+  public function getFlights(): Collection {
+    return $this->flights;
+  }
+
+  public function addFlight(Flight $flight): self {
+    if (!$this->flights->contains($flight)) {
+      $this->flights[] = $flight;
+      $flight->setPlane($this);
+    }
+
+    return $this;
+  }
+
+  public function removeFlight(Flight $flight): self {
+    if ($this->flights->removeElement($flight)) {
+      // set the owning side to null (unless already changed)
+      if ($flight->getPlane() === $this) {
+        $flight->setPlane(null);
+      }
+    }
 
     return $this;
   }
