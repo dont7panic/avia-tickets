@@ -55,16 +55,6 @@ class Airport
     return $this->id;
   }
 
-  public function getName(): ?string {
-    return $this->name;
-  }
-
-  public function setName(string $name): self {
-    $this->name = $name;
-
-    return $this;
-  }
-
   public function getCreatedAt(): ?DateTimeImmutable {
     return $this->createdAt;
   }
@@ -151,6 +141,20 @@ class Airport
         $flightsIn->setAirportTo(null);
       }
     }
+
+    return $this;
+  }
+
+  public function __toString(): string {
+    return $this->getName();
+  }
+
+  public function getName(): ?string {
+    return $this->name;
+  }
+
+  public function setName(string $name): self {
+    $this->name = $name;
 
     return $this;
   }
