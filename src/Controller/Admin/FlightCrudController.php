@@ -19,6 +19,7 @@ class FlightCrudController extends AbstractCrudController
       AssociationField::new('airportTo'),
       AssociationField::new('plane'),
       DateTimeField::new('departsAt'),
+      DateTimeField::new('arrivesAt')->hideOnForm()
     ];
   }
 }
