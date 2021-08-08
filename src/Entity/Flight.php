@@ -6,6 +6,8 @@ use App\Repository\FlightRepository;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=FlightRepository::class)
@@ -24,12 +26,14 @@ class Flight
    * @ORM\ManyToOne(targetEntity=Airport::class, inversedBy="flightsOut")
    * @ORM\JoinColumn(nullable=false)
    */
+  #[Assert\NotEqualTo(propertyPath: "airportTo")]
   private $airportFrom;
 
   /**
    * @ORM\ManyToOne(targetEntity=Airport::class, inversedBy="flightsIn")
    * @ORM\JoinColumn(nullable=false)
    */
+  #[Assert\NotEqualTo(propertyPath: "airportFrom")]
   private $airportTo;
 
   /**
