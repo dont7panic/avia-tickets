@@ -27,11 +27,14 @@ class Plane
    * @ORM\Column(type="string", length=255)
    */
   #[Assert\Length(min: 3)]
+  #[Assert\Regex('/\d+/')]
   private $name;
 
   /**
    * @ORM\Column(type="integer")
    */
+  #[Assert\Type('integer')]
+  #[Assert\Positive]
   private $seats;
 
   /**
