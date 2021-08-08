@@ -26,6 +26,7 @@ class Flight
    * @ORM\ManyToOne(targetEntity=Airport::class, inversedBy="flightsOut")
    * @ORM\JoinColumn(nullable=false)
    */
+  #[Assert\NotBlank]
   #[Assert\NotEqualTo(propertyPath: "airportTo")]
   private $airportFrom;
 
@@ -33,6 +34,7 @@ class Flight
    * @ORM\ManyToOne(targetEntity=Airport::class, inversedBy="flightsIn")
    * @ORM\JoinColumn(nullable=false)
    */
+  #[Assert\NotBlank]
   #[Assert\NotEqualTo(propertyPath: "airportFrom")]
   private $airportTo;
 
@@ -40,11 +42,13 @@ class Flight
    * @ORM\ManyToOne(targetEntity=Plane::class, inversedBy="flights")
    * @ORM\JoinColumn(nullable=false)
    */
+  #[Assert\NotBlank]
   private $plane;
 
   /**
    * @ORM\Column(type="datetime_immutable")
    */
+  #[Assert\GreaterThan('now')]
   private $departsAt;
 
   /**
