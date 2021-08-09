@@ -1,38 +1,38 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base_admin.html.twig' %}
 
 {% block title %}Flight{% endblock %}
 
 {% block body %}
-    <h1>Flight</h1>
+  <h1>Flight</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ flight.id }}</td>
-            </tr>
-            <tr>
-                <th>DepartsAt</th>
-                <td>{{ flight.departsAt ? flight.departsAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>ArrivesAt</th>
-                <td>{{ flight.arrivesAt ? flight.arrivesAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ flight.createdAt ? flight.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ flight.updatedAt ? flight.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="table">
+    <tbody>
+    <tr>
+      <th>Id</th>
+      <td>{{ flight.id }}</td>
+    </tr>
+    <tr>
+      <th>DepartsAt</th>
+      <td>{{ flight.departsAt ? flight.departsAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+      <th>ArrivesAt</th>
+      <td>{{ flight.arrivesAt ? flight.arrivesAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+      <th>CreatedAt</th>
+      <td>{{ flight.createdAt ? flight.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+      <th>UpdatedAt</th>
+      <td>{{ flight.updatedAt ? flight.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    </tbody>
+  </table>
 
-    <a href="{{ path('admin_flight_index') }}">back to list</a>
+  <a href="{{ path('admin_flight_index') }}">back to list</a>
 
-    <a href="{{ path('admin_flight_edit', {'id': flight.id}) }}">edit</a>
+  <a href="{{ path('admin_flight_edit', {'id': flight.id}) }}">edit</a>
 
-    {{ include('admin_flight/_delete_form.html.twig') }}
+  {{ include('admin/flight/_delete_form.html.twig') }}
 {% endblock %}

@@ -1,39 +1,39 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base_admin.html.twig' %}
 
 {% block title %}Airport index{% endblock %}
 
 {% block body %}
-    <h1>Airport index</h1>
+  <h1>Airport index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for airport in airports %}
-            <tr>
-                <td>{{ airport.id }}</td>
-                <td>{{ airport.name }}</td>
-                <td>{{ airport.createdAt ? airport.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ airport.updatedAt ? airport.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('admin_airport_show', {'id': airport.id}) }}">show</a>
-                    <a href="{{ path('admin_airport_edit', {'id': airport.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>CreatedAt</th>
+      <th>UpdatedAt</th>
+      <th>actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for airport in airports %}
+      <tr>
+        <td>{{ airport.id }}</td>
+        <td>{{ airport.name }}</td>
+        <td>{{ airport.createdAt ? airport.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+        <td>{{ airport.updatedAt ? airport.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+        <td>
+          <a href="{{ path('admin_airport_show', {'id': airport.id}) }}">show</a>
+          <a href="{{ path('admin_airport_edit', {'id': airport.id}) }}">edit</a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5">no records found</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 
-    <a href="{{ path('admin_airport_new') }}">Create new</a>
+  <a href="{{ path('admin_airport_new') }}">Create new</a>
 {% endblock %}

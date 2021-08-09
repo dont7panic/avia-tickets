@@ -1,41 +1,41 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base_admin.html.twig' %}
 
 {% block title %}Plane index{% endblock %}
 
 {% block body %}
-    <h1>Plane index</h1>
+  <h1>Plane index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Seats</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for plane in planes %}
-            <tr>
-                <td>{{ plane.id }}</td>
-                <td>{{ plane.name }}</td>
-                <td>{{ plane.seats }}</td>
-                <td>{{ plane.createdAt ? plane.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ plane.updatedAt ? plane.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('admin_plane_show', {'id': plane.id}) }}">show</a>
-                    <a href="{{ path('admin_plane_edit', {'id': plane.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Seats</th>
+      <th>CreatedAt</th>
+      <th>UpdatedAt</th>
+      <th>actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for plane in planes %}
+      <tr>
+        <td>{{ plane.id }}</td>
+        <td>{{ plane.name }}</td>
+        <td>{{ plane.seats }}</td>
+        <td>{{ plane.createdAt ? plane.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+        <td>{{ plane.updatedAt ? plane.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+        <td>
+          <a href="{{ path('admin_plane_show', {'id': plane.id}) }}">show</a>
+          <a href="{{ path('admin_plane_edit', {'id': plane.id}) }}">edit</a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="6">no records found</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 
-    <a href="{{ path('admin_plane_new') }}">Create new</a>
+  <a href="{{ path('admin_plane_new') }}">Create new</a>
 {% endblock %}

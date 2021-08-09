@@ -1,11 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base_admin.html.twig' %}
 
 {% block title %}New Plane{% endblock %}
 
 {% block body %}
-    <h1>Create new Plane</h1>
+  <h1>Create new Plane</h1>
 
-    {{ include('admin_plane/_form.html.twig') }}
+  {{ include('admin/plane/_form.html.twig') }}
 
-    <a href="{{ path('admin_plane_index') }}">back to list</a>
+  <a href="{{ path('admin_plane_index') }}">back to list</a>
 {% endblock %}
