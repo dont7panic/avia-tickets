@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base_admin.html.twig' %}
 
 {% block title %}Hello Controller!{% endblock %}
 
@@ -8,8 +8,8 @@
 
     <ul>
       <h2>Choose your entity</h2>
-      {% for key, controller in controllers %}
-        <li><a href="{{ path(controller) }}">{{ key }}</a></li>
+      {% for key, link in headerLinks %}
+        <li><a href="{{ path(link) }}">{{ key }}</a></li>
       {% endfor %}
     </ul>
   </div>
