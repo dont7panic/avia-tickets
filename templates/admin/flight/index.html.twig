@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Flight index{% endblock %}
+
+{% block body %}
+    <h1>Flight index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>DepartsAt</th>
+                <th>ArrivesAt</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for flight in flights %}
+            <tr>
+                <td>{{ flight.id }}</td>
+                <td>{{ flight.departsAt ? flight.departsAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ flight.arrivesAt ? flight.arrivesAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ flight.createdAt ? flight.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ flight.updatedAt ? flight.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('admin_flight_show', {'id': flight.id}) }}">show</a>
+                    <a href="{{ path('admin_flight_edit', {'id': flight.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('admin_flight_new') }}">Create new</a>
+{% endblock %}

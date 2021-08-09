@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plane{% endblock %}
+
+{% block body %}
+    <h1>Plane</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ plane.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ plane.name }}</td>
+            </tr>
+            <tr>
+                <th>Seats</th>
+                <td>{{ plane.seats }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ plane.createdAt ? plane.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ plane.updatedAt ? plane.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('admin_plane_index') }}">back to list</a>
+
+    <a href="{{ path('admin_plane_edit', {'id': plane.id}) }}">edit</a>
+
+    {{ include('admin_plane/_delete_form.html.twig') }}
+{% endblock %}
