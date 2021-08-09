@@ -9,6 +9,9 @@
     <thead>
     <tr>
       <th>Id</th>
+      <th>AirportFrom</th>
+      <th>AirportTo</th>
+      <th>Plane</th>
       <th>DepartsAt</th>
       <th>ArrivesAt</th>
       <th>CreatedAt</th>
@@ -20,6 +23,9 @@
     {% for flight in flights %}
       <tr>
         <td>{{ flight.id }}</td>
+        <td>{{ flight.airportFrom }}</td>
+        <td>{{ flight.airportTo }}</td>
+        <td>{{ flight.plane }}</td>
         <td>{{ flight.departsAt ? flight.departsAt|date('Y-m-d H:i:s') : '' }}</td>
         <td>{{ flight.arrivesAt ? flight.arrivesAt|date('Y-m-d H:i:s') : '' }}</td>
         <td>{{ flight.createdAt ? flight.createdAt|date('Y-m-d H:i:s') : '' }}</td>

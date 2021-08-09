@@ -12,6 +12,18 @@
       <td>{{ flight.id }}</td>
     </tr>
     <tr>
+      <th>AirportFrom</th>
+      <td>{{ flight.airportFrom }}</td>
+    </tr>
+    <tr>
+      <th>AirportTo</th>
+      <td>{{ flight.airportTo }}</td>
+    </tr>
+    <tr>
+      <th>Plane</th>
+      <td>{{ flight.plane }}</td>
+    </tr>
+    <tr>
       <th>DepartsAt</th>
       <td>{{ flight.departsAt ? flight.departsAt|date('Y-m-d H:i:s') : '' }}</td>
     </tr>
