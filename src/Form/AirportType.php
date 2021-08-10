@@ -11,10 +11,7 @@ class AirportType extends AbstractType
 {
   public function buildForm(FormBuilderInterface $builder, array $options) {
     $builder
-      ->add('name')
-//            ->add('createdAt')
-//            ->add('updatedAt')
-    ;
+      ->add('name');
   }
 
   public function configureOptions(OptionsResolver $resolver) {

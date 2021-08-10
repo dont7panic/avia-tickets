@@ -12,10 +12,7 @@ class PlaneType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options) {
     $builder
       ->add('name')
-      ->add('seats')
-//            ->add('createdAt')
-//            ->add('updatedAt')
-    ;
+      ->add('seats');
   }
 
   public function configureOptions(OptionsResolver $resolver) {
