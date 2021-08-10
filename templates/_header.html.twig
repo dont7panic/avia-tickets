@@ -10,12 +10,16 @@
       </ul>
 
       <div class="text-end">
-        <button type="button" class="btn btn-outline-light me-2">Login</button>
-        <button type="button" class="btn btn-primary">Sign-up</button>
-        <a href="#" class="link-dark text-decoration-none me-2" aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-        </a>
-        <button type="button" class="btn btn-outline-light">Sign out</button>
+        {% if is_granted('IS_ANONYMOUS') %}
+          <a href="{{ path('app_login') }}" class="btn btn-outline-light me-2">Login</a>
+          <a href="{{ path('app_register') }}" class="btn btn-primary">Sign-up</a>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+          <a href="#" class="link-dark text-decoration-none me-2" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <a href="{{ path('app_logout') }}" class="btn btn-outline-light">Sign out</a>
+        {% endif %}
       </div>
     </div>
   </div>
