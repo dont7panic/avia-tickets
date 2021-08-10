@@ -17,7 +17,11 @@
 </head>
 <body>
 {% block header %}
-  {{ include('_header.html.twig') }}
+  {% set headerLinks = [
+    {'name': 'Home' , 'link': ''},
+  ] %}
+
+  {% include '_header.html.twig' with headerLinks %}
 {% endblock %}
 <main class="mx-5">
   {% block body %}{% endblock %}

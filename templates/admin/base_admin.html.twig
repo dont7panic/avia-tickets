@@ -2,4 +2,15 @@
 
 {% block title %}{% endblock %}
 
+{% block header %}
+  {% set headerLinks = [
+    {'name': 'Home' , 'link': 'admin'},
+    {'name': 'Flights' , 'link': 'admin_flight_index'},
+    {'name': 'Airports', 'link': 'admin_airport_index'},
+    {'name': 'Planes', 'link': 'admin_plane_index'}
+  ] %}
+
+  {% include '_header.html.twig' with headerLinks %}
+{% endblock %}
+
 {% block body %}{% endblock %}
