@@ -16,6 +16,15 @@
   {% endblock %}
 </head>
 <body>
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="alert alert-dismissible mb-0" role="alert" id="liveAlert" data-label="{{ label }}">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endfor %}
+
 {% block header %}
   {% set headerLinks = [
     {'name': 'Home' , 'link': 'home'},
@@ -24,6 +33,7 @@
   {% include '_header.html.twig' with headerLinks %}
 {% endblock %}
 <main class="mx-5">
+
   {% block body %}{% endblock %}
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
@@ -37,6 +47,35 @@
     link.classList.add('text-secondary');
   } catch (e) {
   }
+
+  document.querySelectorAll('.alert').forEach(alert => {
+    let className = 'alert-';
+
+    switch (alert.dataset.label) {
+      case 'success':
+        className += 'success';
+        break;
+      case 'notice':
+        className += 'primary';
+        break;
+      case 'warning':
+        className += 'warning';
+        break;
+      case 'error':
+        className += 'danger';
+        break;
+      default:
+        className += 'primary';
+    }
+
+    alert.classList.add(className);
+  });
+
+  setTimeout(() => {
+    if (document.querySelectorAll('.alert').length) {
+      document.querySelectorAll('.alert').forEach(alert => alert.remove());
+    }
+  }, 5000);
 </script>
 </body>
 </html>
