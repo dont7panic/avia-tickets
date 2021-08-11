@@ -4,13 +4,13 @@
 
 {% block body %}
   <div class="example-wrapper">
-    <h1>Hello, !</h1>
+    <h1>Hello, {{ app.user.firstName|default(app.user.email) }}!</h1>
 
-    <ul class="list-group w-25">
+    <ul class="list-group-numbered">
       <h2 class="my-3">Choose your entity</h2>
       {% for key, link in headerLinks %}
-        <li class="list-group-item list-group-item-action">
-          <a class="text-decoration-none text-dark" href="{{ path(link) }}">{{ key }}</a>
+        <li>
+          <a class="text-dark" href="{{ path(link) }}">{{ key }}</a>
         </li>
       {% endfor %}
     </ul>

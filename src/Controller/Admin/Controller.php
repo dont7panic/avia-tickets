@@ -12,7 +12,10 @@ class Controller extends AbstractController
   public function index(): Response {
     return $this->render('admin/index.html.twig', [
       'headerLinks' => [
-        'flight' => 'admin_flight_index', 'airport' => 'admin_airport_index', 'plane' => 'admin_plane_index'
+        'flights' => 'admin_flight_index',
+        'airports' => 'admin_airport_index',
+        'planes' => 'admin_plane_index',
+        'users' => 'admin_user_index'
       ],
     ]);
   }
