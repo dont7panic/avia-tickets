@@ -26,9 +26,11 @@
 {% endfor %}
 
 {% block header %}
-  {% set headerLinks = [
-    {'name': 'Home' , 'link': 'home'},
-  ] %}
+  {% set headerLinks = [] %}
+  {% if is_granted('ROLE_ADMIN') %}
+    {% set headerLinks = headerLinks|merge([{'name': 'Admin' , 'link': 'admin'}]) %}
+  {% endif %}
+  {% set headerLinks = headerLinks|merge([{'name': 'Home' , 'link': 'home'}]) %}
 
   {% include '_header.html.twig' with headerLinks %}
 {% endblock %}
