@@ -21,6 +21,7 @@ class RegistrationController extends AbstractController
     UserAuthenticatorInterface $authenticator,
     LoginFormAuthenticator $formAuthenticator
   ): Response {
+    $this->denyAccessUnlessGranted('IS_ANONYMOUS');
     $user = new User();
     $form = $this->createForm(RegistrationFormType::class, $user);
     $form->handleRequest($request);
