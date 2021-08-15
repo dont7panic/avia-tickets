@@ -13,7 +13,15 @@
         <ul class="results__list">
           <h4>Flights from {{ data.from }} to {{ data.to }} on {{ data.date }}</h4>
           {% for flight in flights %}
-            <li class="results__item">{{ flight.id }}</li>
+            <li class="results__item flight-card">
+              <b>Departs At: </b>{{ flight.departsAt|format_datetime('medium', 'short') }}
+              <b>Arrives At: </b>{{ flight.arrivesAt|format_datetime('medium', 'short') }}
+              <b>Plane: </b>{{ flight.plane }}
+              {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('home') }}" class="btn btn-outline-primary">Book</a>
+                <a href="{{ path('home') }}" class="btn btn-primary">Buy</a>
+              {% endif %}
+            </li>
           {% endfor %}
         </ul>
       {% else %}
