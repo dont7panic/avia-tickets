@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket{% endblock %}
+
+{% block body %}
+  <h1>Ticket</h1>
+
+  <table class="table">
+    <tbody>
+    <tr>
+      <th>Id</th>
+      <td>{{ ticket.id }}</td>
+    </tr>
+    {# <tr> #}
+    {# <th>AirportFrom</th> #}
+    {# <td>{{ ticket.airportFrom }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>AirportTo</th> #}
+    {# <td>{{ ticket.airportTo }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>Plane</th> #}
+    {# <td>{{ ticket.plane }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>DepartsAt</th> #}
+    {# <td>{{ ticket.departsAt ? ticket.departsAt|date('Y-m-d H:i:s') : '' }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>ArrivesAt</th> #}
+    {# <td>{{ ticket.arrivesAt ? ticket.arrivesAt|date('Y-m-d H:i:s') : '' }}</td> #}
+    {# </tr> #}
+    <tr>
+      <th>CreatedAt</th>
+      <td>{{ ticket.createdAt ? ticket.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    <tr>
+      <th>UpdatedAt</th>
+      <td>{{ ticket.updatedAt ? ticket.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="{{ path('ticket_index') }}">back to list</a>
+
+  <a href="{{ path('ticket_edit', {'id': ticket.id}) }}">edit</a>
+
+  {{ include('ticket/_delete_form.html.twig') }}
+{% endblock %}

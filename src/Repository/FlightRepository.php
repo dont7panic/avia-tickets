@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Flight;
+use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -31,6 +32,19 @@ class FlightRepository extends ServiceEntityRepository
       ->setParameter('plane', $plane)
       ->setParameter('departsAt', $departsAt)
       ->setParameter('arrivesAt', $arrivesAt)
+      ->getQuery()
+      ->getResult();
+  }
+
+  public function findFlightsForTicket($from, $to, $date) {
+    return $this->createQueryBuilder('f')
+      ->where('f.airportFrom = :from')
+      ->andWhere('f.airportTo = :to')
+      ->andWhere('f.departsAt BETWEEN :startDate AND :endDate')
+      ->setParameter('from', $from)
+      ->setParameter('to', $to)
+      ->setParameter('startDate', $date)
+      ->setParameter('endDate', $date->add(new DateInterval('PT23H59M')))
       ->getQuery()
       ->getResult();
   }

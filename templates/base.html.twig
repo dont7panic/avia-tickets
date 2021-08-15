@@ -31,6 +31,7 @@
     {% set headerLinks = headerLinks|merge([{'name': 'Admin' , 'link': 'admin'}]) %}
   {% endif %}
   {% set headerLinks = headerLinks|merge([{'name': 'Home' , 'link': 'home'}]) %}
+  {% set headerLinks = headerLinks|merge([{'name': 'Tickets' , 'link': 'ticket_index'}]) %}
 
   {% include '_header.html.twig' with headerLinks %}
 {% endblock %}
