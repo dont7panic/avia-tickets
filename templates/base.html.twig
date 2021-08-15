@@ -31,7 +31,10 @@
     {% set headerLinks = headerLinks|merge([{'name': 'Admin' , 'link': 'admin'}]) %}
   {% endif %}
   {% set headerLinks = headerLinks|merge([{'name': 'Home' , 'link': 'home'}]) %}
-  {% set headerLinks = headerLinks|merge([{'name': 'Tickets' , 'link': 'ticket_index'}]) %}
+  {% set headerLinks = headerLinks|merge([{'name': 'Search' , 'link': 'ticket_search'}]) %}
+  {% if is_granted('ROLE_USER') %}
+    {% set headerLinks = headerLinks|merge([{'name': 'My tickets' , 'link': 'ticket_index'}]) %}
+  {% endif %}
 
   {% include '_header.html.twig' with headerLinks %}
 {% endblock %}

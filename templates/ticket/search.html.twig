@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket search{% endblock %}
+
+{% block body %}
+  <h1>Ticket search</h1>
+  <section class="tickets-search w-25">
+    {{ form(form) }}
+  </section>
+  <section class="tickets-search-results results">
+    {% if flights is defined %}
+      {% if flights|length > 0 %}
+        <ul class="results__list">
+          <h4>Flights from {{ data.from }} to {{ data.to }} on {{ data.date }}</h4>
+          {% for flight in flights %}
+            <li class="results__item flight-card">
+              <b>Departs At: </b>{{ flight.departsAt|format_datetime('medium', 'short') }}
+              <b>Arrives At: </b>{{ flight.arrivesAt|format_datetime('medium', 'short') }}
+              <b>Plane: </b>{{ flight.plane }}
+              {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('ticket_book', {'id': flight.id}) }}" class="btn btn-outline-primary">Book</a>
+                <a href="{{ path('ticket_buy', {'id': flight.id}) }}" class="btn btn-primary">Buy</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h3>Ничего не найдено</h3>
+      {% endif %}
+    {% endif %}
+  </section>
+{% endblock %}

@@ -14,37 +14,45 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TicketRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Ticket::class);
-    }
+  public function __construct(ManagerRegistry $registry) {
+    parent::__construct($registry, Ticket::class);
+  }
 
-    // /**
-    //  * @return Ticket[] Returns an array of Ticket objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+  public function findMyTickets($user) {
+    return $this->createQueryBuilder('t')
+      ->where('t.user = :user')
+      ->setParameter('user', $user)
+      ->orderBy('t.createdAt', 'DESC')
+      ->getQuery()
+      ->getResult();
+  }
 
-    /*
-    public function findOneBySomeField($value): ?Ticket
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+  // /**
+  //  * @return Ticket[] Returns an array of Ticket objects
+  //  */
+  /*
+  public function findByExampleField($value)
+  {
+      return $this->createQueryBuilder('t')
+          ->andWhere('t.exampleField = :val')
+          ->setParameter('val', $value)
+          ->orderBy('t.id', 'ASC')
+          ->setMaxResults(10)
+          ->getQuery()
+          ->getResult()
+      ;
+  }
+  */
+
+  /*
+  public function findOneBySomeField($value): ?Ticket
+  {
+      return $this->createQueryBuilder('t')
+          ->andWhere('t.exampleField = :val')
+          ->setParameter('val', $value)
+          ->getQuery()
+          ->getOneOrNullResult()
+      ;
+  }
+  */
 }

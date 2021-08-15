@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ticket;
 use App\Entity\Airport;
 use App\Repository\FlightRepository;
+use App\Repository\TicketRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -17,8 +18,8 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 #[Route('/ticket')]
 class TicketController extends AbstractController
 {
-  #[Route('/', name: 'ticket_index', methods: ['GET'])]
-  public function index(FlightRepository $flightRepository, Request $request): Response {
+  #[Route('/search', name: 'ticket_search', methods: ['GET'])]
+  public function search(FlightRepository $flightRepository, Request $request): Response {
     $form = $this->createFormBuilder(null, ['method' => Request::METHOD_GET])
       ->add('from', EntityType::class, [
         'class' => Airport::class
@@ -34,6 +35,8 @@ class TicketController extends AbstractController
       ->getForm();
     $form->handleRequest($request);
 
+    dump($this->getUser());
+
     if ($form->isSubmitted() && $form->isValid()) {
       $flights = $flightRepository->findFlightsForTicket(
         $form->getData()['from'],
@@ -41,7 +44,7 @@ class TicketController extends AbstractController
         $form->getData()['date']
       );
 
-      return $this->render('ticket/index.html.twig', [
+      return $this->render('ticket/search.html.twig', [
         'flights' => $flights,
         'form' => $form->createView(),
         'data' => [
@@ -51,14 +54,38 @@ class TicketController extends AbstractController
         ]
       ]);
     }
-    return $this->render('ticket/index.html.twig', [
+    return $this->render('ticket/search.html.twig', [
       'form' => $form->createView()
     ]);
   }
 
-  #[Route('/new', name: 'ticket_new', methods: ['GET', 'POST'])]
-  public function new(Request $request): Response {
+  #[Route('/', name: 'ticket_index', methods: ['GET'])]
+  public function index(TicketRepository $ticketRepository): Response {
+    return $this->render('ticket/index.html.twig', [
+      'tickets' => $ticketRepository->findMyTickets($this->getUser())
+    ]);
+  }
+
+  #[Route('/{id}/buy', name: 'ticket_buy', methods: ['GET', 'POST'])]
+  public function buy(Request $request, FlightRepository $flightRepository, int $id): Response {
     $ticket = new Ticket();
+    $ticket->setUser($this->getUser());
+    $ticket->setFlight($flightRepository->findOneBy(['id' => $id]));
+    $ticket->setStatus('paid');
+
+    $entityManager = $this->getDoctrine()->getManager();
+    $entityManager->persist($ticket);
+    $entityManager->flush();
+
+    return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
+  }
+
+  #[Route('/{id}/book', name: 'ticket_book', methods: ['GET', 'POST'])]
+  public function book(Request $request, FlightRepository $flightRepository, int $id): Response {
+    $ticket = new Ticket();
+    $ticket->setUser($this->getUser());
+    $ticket->setFlight($flightRepository->findOneBy(['id' => $id]));
+    $ticket->setStatus('booked');
 
     $entityManager = $this->getDoctrine()->getManager();
     $entityManager->persist($ticket);
@@ -74,12 +101,18 @@ class TicketController extends AbstractController
     ]);
   }
 
-  #[Route('/{id}/edit', name: 'ticket_edit', methods: ['GET', 'POST'])]
-  public function edit(Request $request, Ticket $ticket): Response {
+  #[Route('/{id}/buy_existing', name: 'ticket_buy_existing', methods: ['GET', 'POST'])]
+  public function buyExisting(Request $request, Ticket $ticket): Response {
+    $ticket->setStatus('paid');
+
+    $entityManager = $this->getDoctrine()->getManager();
+    $entityManager->persist($ticket);
+    $entityManager->flush();
+
     return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
   }
 
-  #[Route('/{id}', name: 'ticket_delete', methods: ['POST'])]
+  #[Route('/{id}/delete', name: 'ticket_delete', methods: ['GET', 'POST'])]
   public function delete(Request $request, Ticket $ticket): Response {
     if ($this->isCsrfTokenValid('delete' . $ticket->getId(), $request->request->get('_token'))) {
       $entityManager = $this->getDoctrine()->getManager();

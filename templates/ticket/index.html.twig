@@ -1,63 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ticket search{% endblock %}
+{% block title %}My tickets{% endblock %}
 
 {% block body %}
-  <h1>Ticket search</h1>
-  <section class="tickets-search w-25">
-    {{ form(form) }}
-  </section>
-  <section class="tickets-search-results results">
-    {% if flights is defined %}
-      {% if flights|length > 0 %}
-        <ul class="results__list">
-          <h4>Flights from {{ data.from }} to {{ data.to }} on {{ data.date }}</h4>
-          {% for flight in flights %}
-            <li class="results__item flight-card">
-              <b>Departs At: </b>{{ flight.departsAt|format_datetime('medium', 'short') }}
-              <b>Arrives At: </b>{{ flight.arrivesAt|format_datetime('medium', 'short') }}
-              <b>Plane: </b>{{ flight.plane }}
-              {% if is_granted('ROLE_USER') %}
-                <a href="{{ path('home') }}" class="btn btn-outline-primary">Book</a>
-                <a href="{{ path('home') }}" class="btn btn-primary">Buy</a>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <h3>Ничего не найдено</h3>
-      {% endif %}
-    {% endif %}
-  </section>
-  {# <table class="table"> #}
-  {# <thead> #}
-  {# <tr> #}
-  {# <th>Id</th> #}
-  {# <th>Status</th> #}
-  {# <th>CreatedAt</th> #}
-  {# <th>UpdatedAt</th> #}
-  {# <th>actions</th> #}
-  {# </tr> #}
-  {# </thead> #}
-  {# <tbody> #}
-  {# {% for ticket in tickets %} #}
-  {# <tr> #}
-  {# <td>{{ ticket.id }}</td> #}
-  {# <td>{{ ticket.status }}</td> #}
-  {# <td>{{ ticket.createdAt ? ticket.createdAt|date('Y-m-d H:i:s') : '' }}</td> #}
-  {# <td>{{ ticket.updatedAt ? ticket.updatedAt|date('Y-m-d H:i:s') : '' }}</td> #}
-  {# <td> #}
-  {# <a href="{{ path('ticket_show', {'id': ticket.id}) }}">show</a> #}
-  {# <a href="{{ path('ticket_edit', {'id': ticket.id}) }}">edit</a> #}
-  {# </td> #}
-  {# </tr> #}
-  {# {% else %} #}
-  {# <tr> #}
-  {# <td colspan="5">no records found</td> #}
-  {# </tr> #}
-  {# {% endfor %} #}
-  {# </tbody> #}
-  {# </table> #}
-
-  {# <a href="{{ path('ticket_new') }}">Create new</a> #}
+  <table class="table">
+    <thead>
+    <tr>
+      <th>From</th>
+      <th>To</th>
+      <th>DepartsAT</th>
+      <th>ArrivesAT</th>
+      <th>Plane</th>
+      <th>Status</th>
+      <th>BoughtAt</th>
+      <th>actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for ticket in tickets %}
+      <tr>
+        <td>{{ ticket.flight.airportFrom }}</td>
+        <td>{{ ticket.flight.airportTo }}</td>
+        <td>{{ ticket.flight.departsAT|format_datetime('medium', 'short') }}</td>
+        <td>{{ ticket.flight.arrivesAT|format_datetime('medium', 'short') }}</td>
+        <td>{{ ticket.flight.plane }}</td>
+        <td>{{ ticket.status }}</td>
+        <td>{{ ticket.createdAt ? ticket.createdAt|format_datetime('medium', 'short') : '' }}</td>
+        <td>
+          {% if ticket.status == 'paid' %}
+            {{ include('ticket/_delete_form.html.twig') }}
+          {% else %}
+            <a class="btn btn-primary" href="{{ path('ticket_buy_existing', {'id': ticket.id}) }}">Buy</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5">no tickets found</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
