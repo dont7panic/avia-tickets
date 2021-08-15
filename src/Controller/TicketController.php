@@ -29,13 +29,11 @@ class TicketController extends AbstractController
       ])
       ->add('date', DateType::class, [
         'input' => 'datetime_immutable',
-        'constraints' => [new GreaterThan('now')]
+        'constraints' => [new GreaterThan('-1day')]
       ])
       ->add('search', SubmitType::class, ['label' => 'Search'])
       ->getForm();
     $form->handleRequest($request);
-
-    dump($this->getUser());
 
     if ($form->isSubmitted() && $form->isValid()) {
       $flights = $flightRepository->findFlightsForTicket(
