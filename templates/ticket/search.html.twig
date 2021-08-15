@@ -17,8 +17,10 @@
               <b>Departs At: </b>{{ flight.departsAt|format_datetime('medium', 'short') }}
               <b>Arrives At: </b>{{ flight.arrivesAt|format_datetime('medium', 'short') }}
               <b>Plane: </b>{{ flight.plane }}
-              {% if is_granted('ROLE_USER') %}
-                <a href="{{ path('ticket_book', {'id': flight.id}) }}" class="btn btn-outline-primary">Book</a>
+              {% if is_granted('ROLE_USER') and flight.departsAt > date('now') %}
+                {% if flight.departsAt > date('+2days') %}
+                  <a href="{{ path('ticket_book', {'id': flight.id}) }}" class="btn btn-outline-primary">Book</a>
+                {% endif %}
                 <a href="{{ path('ticket_buy', {'id': flight.id}) }}" class="btn btn-primary">Buy</a>
               {% endif %}
             </li>
