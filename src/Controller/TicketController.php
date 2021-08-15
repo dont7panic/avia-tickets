@@ -4,9 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ticket;
 use App\Entity\Airport;
-use App\Entity\Flight;
 use App\Repository\FlightRepository;
-use DateInterval;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -14,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotEqualTo;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 
 #[Route('/ticket')]
 class TicketController extends AbstractController
@@ -23,14 +21,15 @@ class TicketController extends AbstractController
   public function index(FlightRepository $flightRepository, Request $request): Response {
     $form = $this->createFormBuilder(null, ['method' => Request::METHOD_GET])
       ->add('from', EntityType::class, [
-        'class' => Airport::class,
-//        'constraints' => [new NotEqualTo([$this, 'checkPlaneAccessibility'])]
+        'class' => Airport::class
       ])
       ->add('to', EntityType::class, [
-        'class' => Airport::class,
-//        'constraints' => [new NotEqualTo([$this, 'checkPlaneAccessibility'])]
+        'class' => Airport::class
       ])
-      ->add('date', DateType::class, ['input' => 'datetime_immutable'])
+      ->add('date', DateType::class, [
+        'input' => 'datetime_immutable',
+        'constraints' => [new GreaterThan('now')]
+      ])
       ->add('search', SubmitType::class, ['label' => 'Search'])
       ->getForm();
     $form->handleRequest($request);
