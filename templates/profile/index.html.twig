@@ -3,28 +3,48 @@
 {% block title %}Hello ProfileController!{% endblock %}
 
 {% block body %}
+  <style>
+    .loading {
+
+    }
+  </style>
+
   <section class="profile">
     <h1 class="profile__title">Edit your profile</h1>
     <div class="w-25">
       {{ form(form) }}
     </div>
-    <form class="top-up__form">
-      <label class="form-label">
-        Top up amount
-        <input class="form-control" type="text" name="balance" placeholder="Amount">
-      </label>
-      <button formaction="{{ path('profile_top_up') }}" class="btn btn-outline-primary">Top up</button>
-    </form>
+    <div class="profile__balance-wrapper">
+      <h3 class="profile__balance-title">Your balance is:
+        <span class="profile__balance-amount">{{ balance|default('0') }}</span>
+      </h3>
+      <form class="top-up__form" action="{{ path('profile_top_up') }}" method="post">
+        <label class="form-label">
+          Top up amount
+          <input class="form-control" type="text" name="balance" placeholder="Amount">
+        </label>
+        <button type="submit" class="btn btn-outline-primary">Top up</button>
+      </form>
+    </div>
   </section>
 
-  {# <script> #}
-  {# document.querySelectorAll('button').forEach(btn => { #}
-  {# btn.addEventListener('click', e => { #}
-  {# e.preventDefault(); #}
+  <script>
+    const balanceAmount = document.querySelector('.profile__balance-amount');
 
-  {# fetch(btn.formAction) #}
-  {# .then(data => console.log(response.text(data))) #}
-  {# }); #}
-  {# }); #}
-  {# </script> #}
+    document.querySelector('.top-up__form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      balanceAmount.textContent = '';
+      balanceAmount.classList.toggle('spinner-border');
+
+      const topupValue = this.querySelector('input[name="balance"]').value;
+
+      fetch(this.action, {method: 'POST', body: topupValue})
+        .then(data => data.json())
+        .then(data => balanceAmount.textContent = data)
+        .catch(e => console.log(e))
+        .finally(() => balanceAmount.classList.toggle('spinner-border'))
+    });
+
+  </script>
 {% endblock %}

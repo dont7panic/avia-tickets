@@ -41,13 +41,19 @@ class ProfileController extends AbstractController
     }
 
     return $this->render('profile/index.html.twig', [
-      'form' => $form->createView()
+      'form' => $form->createView(),
+      'balance' => $this->getUser()->getBalance()
     ]);
   }
 
-  #[Route('/profile/edit/top-up', name: 'profile_top_up', methods: ['POST'])]
-  public function topUp() {
-    return 'hello';
-    return $this->getUser();
+  #[Route('/profile/edit/top-up', name: 'profile_top_up', methods: ['GET', 'POST'])]
+  public function topUp(Request $request) {
+    $topupValue = (int)$request->getContent();
+    $balance = (int)$this->getUser()->getBalance();
+    $this->getUser()->setBalance($balance + $topupValue);
+
+    $this->getDoctrine()->getManager()->flush();
+
+    return new Response(json_encode($this->getUser()->getBalance()));
   }
 }
