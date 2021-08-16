@@ -17,10 +17,12 @@ class ProfileController extends AbstractController
     $form = $this->createFormBuilder(null, ['method' => Request::METHOD_POST])
       ->add('first-name', TextType::class, [
         'label' => 'First name',
+        'attr' => ['value' => $this->getUser()->getFirstName()],
         'constraints' => [new Length(['min' => 3])]
       ])
       ->add('last-name', TextType::class, [
         'label' => 'Last name',
+        'attr' => ['value' => $this->getUser()->getLastName()],
         'constraints' => [new Length(['min' => 3])]
       ])
       ->add('save', SubmitType::class, ['label' => 'Save'])
