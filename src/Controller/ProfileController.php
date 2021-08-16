@@ -37,6 +37,11 @@ class ProfileController extends AbstractController
 
       $this->getDoctrine()->getManager()->flush();
 
+      $this->addFlash(
+        'success',
+        'Congratulations, ' . $user->getFirstName() . ' ' . $user->getLastName() . '! Your profile has been edited!'
+      );
+
       return $this->redirectToRoute('profile', [], Response::HTTP_SEE_OTHER);
     }
 
