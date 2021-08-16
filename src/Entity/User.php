@@ -46,16 +46,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
   /**
    * @ORM\Column(type="string", length=100, nullable=true)
    */
+  #[Assert\Length(min: 3)]
   private $firstName;
 
   /**
    * @ORM\Column(type="string", length=100, nullable=true)
    */
+  #[Assert\Length(min: 3)]
   private $lastName;
 
   /**
    * @ORM\Column(type="float", nullable=true)
    */
+  #[Assert\Type('float')]
+  #[Assert\Positive]
   private $balance;
 
   /**
@@ -63,9 +67,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
    */
   private $tickets;
 
-  public function __construct()
-  {
-      $this->tickets = new ArrayCollection();
+  public function __construct() {
+    $this->tickets = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -179,30 +182,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
   /**
    * @return Collection|Ticket[]
    */
-  public function getTickets(): Collection
-  {
-      return $this->tickets;
+  public function getTickets(): Collection {
+    return $this->tickets;
   }
 
-  public function addTicket(Ticket $ticket): self
-  {
-      if (!$this->tickets->contains($ticket)) {
-          $this->tickets[] = $ticket;
-          $ticket->setUser($this);
-      }
+  public function addTicket(Ticket $ticket): self {
+    if (!$this->tickets->contains($ticket)) {
+      $this->tickets[] = $ticket;
+      $ticket->setUser($this);
+    }
 
-      return $this;
+    return $this;
   }
 
-  public function removeTicket(Ticket $ticket): self
-  {
-      if ($this->tickets->removeElement($ticket)) {
-          // set the owning side to null (unless already changed)
-          if ($ticket->getUser() === $this) {
-              $ticket->setUser(null);
-          }
+  public function removeTicket(Ticket $ticket): self {
+    if ($this->tickets->removeElement($ticket)) {
+      // set the owning side to null (unless already changed)
+      if ($ticket->getUser() === $this) {
+        $ticket->setUser(null);
       }
+    }
 
-      return $this;
+    return $this;
   }
 }

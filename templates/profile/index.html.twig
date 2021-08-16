@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfileController!{% endblock %}
+
+{% block body %}
+  <section class="profile">
+    <h1 class="profile__title">Edit your profile</h1>
+    <div class="w-25">
+      {{ form(form) }}
+    </div>
+    <form class="top-up__form">
+      <label class="form-label">
+        Top up amount
+        <input class="form-control" type="text" name="balance" placeholder="Amount">
+      </label>
+      <button formaction="{{ path('profile_top_up') }}" class="btn btn-outline-primary">Top up</button>
+    </form>
+  </section>
+
+  {# <script> #}
+  {# document.querySelectorAll('button').forEach(btn => { #}
+  {# btn.addEventListener('click', e => { #}
+  {# e.preventDefault(); #}
+
+  {# fetch(btn.formAction) #}
+  {# .then(data => console.log(response.text(data))) #}
+  {# }); #}
+  {# }); #}
+  {# </script> #}
+{% endblock %}
