@@ -61,7 +61,7 @@ class FlightController extends AbstractController
 
       $this->addFlash(
         'success',
-        'Your changes were saved! New flight with id ' . $flight->getId() . ' has been edited'
+        'Your changes have been saved! New flight with id ' . $flight->getId() . ' has been edited'
       );
 
       return $this->redirectToRoute('admin_flight_index', [], Response::HTTP_SEE_OTHER);
@@ -82,7 +82,7 @@ class FlightController extends AbstractController
 
       $this->addFlash(
         'success',
-        'Your changes were saved! New flight with id ' . $flight->getId() . ' has been deleted'
+        'Your changes have been saved! New flight with id ' . $flight->getId() . ' has been deleted'
       );
     }
 
