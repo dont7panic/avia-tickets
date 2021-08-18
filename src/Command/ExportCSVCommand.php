@@ -15,9 +15,9 @@ class ExportCSVCommand extends Command
   private $registry;
 
   public function __construct(ManagerRegistry $registry) {
-    parent::__construct();
-
     $this->registry = $registry;
+
+    parent::__construct();
   }
 
   protected function configure() {
