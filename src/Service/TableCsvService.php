@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\TestPlane;
 
 class TableCsvService
 {
@@ -23,15 +25,15 @@ class TableCsvService
     $tableName = strtolower(str_replace('App\Entity\\', '', $repository->getClassName()));
     $fileName = date('Ymd_His_', strtotime('now')) . $tableName . '.csv';
     $defaultPath = __DIR__ . '/../../public/uploads/csv/' . $fileName;
-    $p = __DIR__ . '/../../' . $path . $fileName ?? $defaultPath;
+    $finalPath = __DIR__ . '/../../' . $path . $fileName ?? $defaultPath;
 
-    $fp = fopen($p, 'w+');
+    $fp = fopen($finalPath, 'w+');
 
     foreach ($data as $fields) {
-      $fields['createdAt'] = $fields['createdAt']->format('Y-m-d H-i-s');
+      $fields['createdAt'] = $fields['createdAt']->format('Y-m-d H:i:s');
 
       if ($fields['updatedAt']) {
-        $fields['updatedAt'] = $fields['updatedAt']->format('Y-m-d H-i-s');
+        $fields['updatedAt'] = $fields['updatedAt']->format('Y-m-d H:i:s');
       }
 
       fputcsv($fp, $fields);
@@ -42,7 +44,26 @@ class TableCsvService
     return true;
   }
 
-  public function importTable(string $class, string $path): bool {
+  public function importTable(string $path) {
+    $finalPath = __DIR__ . '/../../' . $path;
+
+    if ($fp = fopen($finalPath, 'r')) {
+
+      while ($row = fgetcsv($fp)) {
+        $entity = new TestPlane();
+
+        $entity->setId($row[0]);
+        $entity->setName($row[1]);
+        $entity->setSeats($row[2]);
+        $entity->setCreatedAt(new DateTimeImmutable($row[3]));
+        $entity->setUpdatedAt(new DateTimeImmutable($row[4]));
+
+        $this->em->persist($entity);
+        $this->em->flush();
+      }
+      fclose($fp);
+    }
+
     return true;
   }
 }
