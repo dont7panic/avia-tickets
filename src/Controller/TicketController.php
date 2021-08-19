@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\MoneyTransaction;
+use App\Entity\Notification;
 use App\Entity\Ticket;
 use App\Entity\Airport;
 use App\Repository\FlightRepository;
 use App\Repository\TicketRepository;
+use Doctrine\DBAL\Exception;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -18,6 +21,8 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 #[Route('/ticket')]
 class TicketController extends AbstractController
 {
+  const TICKET_PRICE = 1000;
+
   #[Route('/search', name: 'ticket_search', methods: ['GET'])]
   public function search(FlightRepository $flightRepository, Request $request): Response {
     $form = $this->createFormBuilder(null, ['method' => Request::METHOD_GET])
@@ -64,30 +69,86 @@ class TicketController extends AbstractController
     ]);
   }
 
+  /**
+   * @throws Exception
+   */
   #[Route('/{id}/buy', name: 'ticket_buy', methods: ['GET', 'POST'])]
-  public function buy(Request $request, FlightRepository $flightRepository, int $id): Response {
-    $ticket = new Ticket();
-    $ticket->setUser($this->getUser());
-    $ticket->setFlight($flightRepository->findOneBy(['id' => $id]));
-    $ticket->setStatus('paid');
+  public function buy(FlightRepository $flightRepository, int $id): Response {
+    $em = $this->getDoctrine()->getManager();
+    $flight = $flightRepository->findOneBy(['id' => $id]);
+    $user = $this->getUser();
+    $balance = $user->getBalance();
 
-    $entityManager = $this->getDoctrine()->getManager();
-    $entityManager->persist($ticket);
-    $entityManager->flush();
+    if ($balance > self::TICKET_PRICE) {
+      $em->getConnection()->beginTransaction();
+      try {
+        $ticket = new Ticket();
+        $ticket->setUser($user);
+        $ticket->setFlight($flight);
+        $ticket->setStatus('paid');
+        $em->persist($ticket);
+
+        $mt = new MoneyTransaction();
+        $mt->setUser($user);
+        $mt->setMoney(self::TICKET_PRICE);
+        $em->persist($mt);
+
+        $user->setBalance($balance - $mt->getMoney());
+
+        $notification = new Notification();
+        $notification->setType('email');
+        $notification->setUser($user);
+        $notification->setContent('You\'ve successfully bought the ticket to flight #' . $flight->getId() . '!');
+        $em->persist($notification);
+
+        $em->flush();
+        $em->getConnection()->commit();
+
+        $this->addFlash('success', 'You\'ve successfully bought the ticket to flight #' . $flight->getId() . '!');
+      } catch (Exception $e) {
+        $this->addFlash('error', 'Error: ' . $e->getCode() . '. ' . $e->getMessage());
+
+        $em->getConnection()->rollBack();
+        throw $e;
+      }
+    } else {
+      $this->addFlash('error', 'You don\'t have enough money! Top up your balance first!');
+      return $this->redirectToRoute('profile');
+    }
 
     return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
   }
 
   #[Route('/{id}/book', name: 'ticket_book', methods: ['GET', 'POST'])]
-  public function book(Request $request, FlightRepository $flightRepository, int $id): Response {
-    $ticket = new Ticket();
-    $ticket->setUser($this->getUser());
-    $ticket->setFlight($flightRepository->findOneBy(['id' => $id]));
-    $ticket->setStatus('booked');
+  public function book(FlightRepository $flightRepository, int $id): Response {
+    $em = $this->getDoctrine()->getManager();
+    $flight = $flightRepository->findOneBy(['id' => $id]);
+    $user = $this->getUser();
 
-    $entityManager = $this->getDoctrine()->getManager();
-    $entityManager->persist($ticket);
-    $entityManager->flush();
+    $em->getConnection()->beginTransaction();
+    try {
+      $ticket = new Ticket();
+      $ticket->setUser($user);
+      $ticket->setFlight($flight);
+      $ticket->setStatus('booked');
+      $em->persist($ticket);
+
+      $notification = new Notification();
+      $notification->setType('email');
+      $notification->setUser($user);
+      $notification->setContent('You\'ve successfully booked the ticket to flight #' . $flight->getId() . '!');
+      $em->persist($notification);
+
+      $em->flush();
+      $em->getConnection()->commit();
+
+      $this->addFlash('success', 'You\'ve successfully booked the ticket to flight #' . $flight->getId() . '!');
+    } catch (Exception $e) {
+      $this->addFlash('error', 'Error: ' . $e->getCode() . '. ' . $e->getMessage());
+
+      $em->getConnection()->rollBack();
+      throw $e;
+    }
 
     return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
   }
@@ -100,12 +161,48 @@ class TicketController extends AbstractController
   }
 
   #[Route('/{id}/buy_existing', name: 'ticket_buy_existing', methods: ['GET', 'POST'])]
-  public function buyExisting(Request $request, Ticket $ticket): Response {
-    $ticket->setStatus('paid');
+  public function buyExisting(Ticket $ticket): Response {
+    $em = $this->getDoctrine()->getManager();
+    $user = $this->getUser();
+    $balance = $user->getBalance();
 
-    $entityManager = $this->getDoctrine()->getManager();
-    $entityManager->persist($ticket);
-    $entityManager->flush();
+    if ($balance > self::TICKET_PRICE) {
+      $em->getConnection()->beginTransaction();
+      try {
+        $ticket->setStatus('paid');
+        $em->persist($ticket);
+
+        $mt = new MoneyTransaction();
+        $mt->setUser($user);
+        $mt->setMoney(self::TICKET_PRICE);
+        $em->persist($mt);
+
+        $user->setBalance($balance - $mt->getMoney());
+
+        $notification = new Notification();
+        $notification->setType('email');
+        $notification->setUser($user);
+        $notification->setContent(
+          'You\'ve successfully bought the ticket to flight #' . $ticket->getFlight()->getId() . '!'
+        );
+        $em->persist($notification);
+
+        $em->flush();
+        $em->getConnection()->commit();
+
+        $this->addFlash(
+          'success',
+          'You\'ve successfully bought the ticket to flight #' . $ticket->getFlight()->getId() . '!');
+      } catch (Exception $e) {
+        $this->addFlash('error', 'Error: ' . $e->getCode() . '. ' . $e->getMessage());
+
+        $em->getConnection()->rollBack();
+        throw $e;
+      }
+    } else {
+      $this->addFlash('error', 'You don\'t have enough money! Top up your balance first!');
+      return $this->redirectToRoute('profile');
+    }
 
     return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
   }
@@ -113,9 +210,37 @@ class TicketController extends AbstractController
   #[Route('/{id}/delete', name: 'ticket_delete', methods: ['GET', 'POST'])]
   public function delete(Request $request, Ticket $ticket): Response {
     if ($this->isCsrfTokenValid('delete' . $ticket->getId(), $request->request->get('_token'))) {
-      $entityManager = $this->getDoctrine()->getManager();
-      $entityManager->remove($ticket);
-      $entityManager->flush();
+      $em = $this->getDoctrine()->getManager();
+      $user = $this->getUser();
+      $balance = $user->getBalance();
+
+      $em->getConnection()->beginTransaction();
+      try {
+        $mt = new MoneyTransaction();
+        $mt->setUser($user);
+        $mt->setMoney(-self::TICKET_PRICE / 2);
+        $em->persist($mt);
+
+        $user->setBalance($balance - $mt->getMoney());
+
+        $notification = new Notification();
+        $notification->setType('email');
+        $notification->setUser($user);
+        $notification->setContent('You\'ve successfully gotten back the ticket #' . $ticket->getId() . '!');
+        $em->persist($notification);
+
+        $em->remove($ticket);
+
+        $em->flush();
+        $em->getConnection()->commit();
+
+        $this->addFlash('success', 'You\'ve successfully gotten back the ticket #' . $ticket->getId() . '!');
+      } catch (Exception $e) {
+        $this->addFlash('error', 'Error: ' . $e->getCode() . '. ' . $e->getMessage());
+
+        $em->getConnection()->rollBack();
+        throw $e;
+      }
     }
 
     return $this->redirectToRoute('ticket_index', [], Response::HTTP_SEE_OTHER);
