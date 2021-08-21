@@ -21,7 +21,7 @@ class Controller extends AbstractController
     $labels = ['Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6'];
 
     // $data - продолжительность всех броней в формате Unix time, умноженных на 1000, т.к.
-    // JS, в отличии от PHP, считает время в милисекундах. Каждый элемент массива $data - массив,
+    // JS, в отличии от PHP, считает время в миллисекундах. Каждый элемент массива $data - массив,
     // первый элемент которого - дата начала аренды, второй - дата окончания
     // foreach ($orders as $order) {...}
     // { $data[] = [strtotime($order->getStartDate()) * 1000, strtotime($order->getEndDate()) * 1000] }
