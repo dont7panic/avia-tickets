@@ -6,11 +6,16 @@ use App\Entity\MoneyTransaction;
 use App\Entity\Notification;
 use App\Entity\Ticket;
 use App\Entity\Airport;
+use App\Event\BoughtTicketCancelledEvent;
+use App\Event\TicketBookedEvent;
+use App\Event\TicketBoughtEvent;
 use App\Repository\FlightRepository;
 use App\Repository\TicketRepository;
+use App\Subscriber\TicketSubscriber;
 use Doctrine\DBAL\Exception;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,7 +78,7 @@ class TicketController extends AbstractController
    * @throws Exception
    */
   #[Route('/{id}/buy', name: 'ticket_buy', methods: ['GET', 'POST'])]
-  public function buy(FlightRepository $flightRepository, int $id): Response {
+  public function buy(FlightRepository $flightRepository, int $id, EventDispatcherInterface $dispatcher): Response {
     $em = $this->getDoctrine()->getManager();
     $flight = $flightRepository->findOneBy(['id' => $id]);
     $user = $this->getUser();
@@ -102,6 +107,10 @@ class TicketController extends AbstractController
         $em->persist($notification);
 
         $em->flush();
+
+        $dispatcher->addSubscriber(new TicketSubscriber());
+        $dispatcher->dispatch(new TicketBoughtEvent($ticket), TicketBoughtEvent::NAME);
+
         $em->getConnection()->commit();
 
         $this->addFlash('success', 'You\'ve successfully bought the ticket to flight #' . $flight->getId() . '!');
@@ -120,7 +129,7 @@ class TicketController extends AbstractController
   }
 
   #[Route('/{id}/book', name: 'ticket_book', methods: ['GET', 'POST'])]
-  public function book(FlightRepository $flightRepository, int $id): Response {
+  public function book(FlightRepository $flightRepository, int $id, EventDispatcherInterface $dispatcher): Response {
     $em = $this->getDoctrine()->getManager();
     $flight = $flightRepository->findOneBy(['id' => $id]);
     $user = $this->getUser();
@@ -140,6 +149,10 @@ class TicketController extends AbstractController
       $em->persist($notification);
 
       $em->flush();
+
+      $dispatcher->addSubscriber(new TicketSubscriber());
+      $dispatcher->dispatch(new TicketBookedEvent($ticket), TicketBookedEvent::NAME);
+
       $em->getConnection()->commit();
 
       $this->addFlash('success', 'You\'ve successfully booked the ticket to flight #' . $flight->getId() . '!');
@@ -161,7 +174,7 @@ class TicketController extends AbstractController
   }
 
   #[Route('/{id}/buy_existing', name: 'ticket_buy_existing', methods: ['GET', 'POST'])]
-  public function buyExisting(Ticket $ticket): Response {
+  public function buyExisting(Ticket $ticket, EventDispatcherInterface $dispatcher): Response {
     $em = $this->getDoctrine()->getManager();
     $user = $this->getUser();
     $balance = $user->getBalance();
@@ -188,6 +201,10 @@ class TicketController extends AbstractController
         $em->persist($notification);
 
         $em->flush();
+
+        $dispatcher->addSubscriber(new TicketSubscriber());
+        $dispatcher->dispatch(new TicketBoughtEvent($ticket), TicketBoughtEvent::NAME);
+
         $em->getConnection()->commit();
 
         $this->addFlash(
@@ -208,7 +225,7 @@ class TicketController extends AbstractController
   }
 
   #[Route('/{id}/delete', name: 'ticket_delete', methods: ['GET', 'POST'])]
-  public function delete(Request $request, Ticket $ticket): Response {
+  public function delete(Request $request, Ticket $ticket, EventDispatcherInterface $dispatcher): Response {
     if ($this->isCsrfTokenValid('delete' . $ticket->getId(), $request->request->get('_token'))) {
       $em = $this->getDoctrine()->getManager();
       $user = $this->getUser();
@@ -232,6 +249,10 @@ class TicketController extends AbstractController
         $em->remove($ticket);
 
         $em->flush();
+
+        $dispatcher->addSubscriber(new TicketSubscriber());
+        $dispatcher->dispatch(new BoughtTicketCancelledEvent($ticket), BoughtTicketCancelledEvent::NAME);
+
         $em->getConnection()->commit();
 
         $this->addFlash('success', 'You\'ve successfully gotten back the ticket #' . $ticket->getId() . '!');
