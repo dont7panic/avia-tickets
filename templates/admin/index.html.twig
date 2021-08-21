@@ -3,16 +3,23 @@
 {% block title %}Hello Controller!{% endblock %}
 
 {% block body %}
-  <div class="example-wrapper">
-    <h1>Hello, {{ app.user.firstName|default(app.user.email) }}!</h1>
+  <style>
+    .my-chart {
+      max-width: 1000px !important;
+      max-height: 1000px !important;
+    }
+  </style>
+  <h1>Hello, {{ app.user.firstName|default(app.user.email) }}!</h1>
 
-    <ul class="list-group-numbered">
-      <h2 class="my-3">Choose your entity</h2>
-      {% for key, link in headerLinks %}
-        <li>
-          <a class="text-dark" href="{{ path(link) }}">{{ key }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+  {# Подключаем график, устанавливаем ему класс. В классе (см. выше в теге style) установил размеры #}
+  {{ render_chart(chart, {'class': 'my-chart'}) }}
+
+  <ul class="list-group-numbered">
+    <h2 class="my-3">Choose your entity</h2>
+    {% for key, link in headerLinks %}
+      <li>
+        <a class="text-dark" href="{{ path(link) }}">{{ key }}</a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}
