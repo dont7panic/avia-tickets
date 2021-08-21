@@ -24,7 +24,7 @@ class Controller extends AbstractController
     // JS, в отличии от PHP, считает время в милисекундах. Каждый элемент массива $data - массив,
     // первый элемент которого - дата начала аренды, второй - дата окончания
     // foreach ($orders as $order) {...}
-    // { $data[] = [strtotime($order->getStartDate()) * 1000, strtotime($order->getStartDate()) * 1000] }
+    // { $data[] = [strtotime($order->getStartDate()) * 1000, strtotime($order->getEndDate()) * 1000] }
 
     $data = [
       [1627754400000, 1628532000000],
