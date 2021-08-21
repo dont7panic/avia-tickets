@@ -37,6 +37,8 @@ class Controller extends AbstractController
 
     // $startDate - дата начала графика. Можно подставить из первого заказа
     // $startDate = strtotime($orders[0]->getStartDate()) * 1000
+    // или с сегодняшнего дня
+    // $startDate = strtotime('today') * 1000
     $startDate = $data[0][0];
 
     // $endDate - дата конца графика. Можно, например, указать продолжительность в месяц (как у меня)
