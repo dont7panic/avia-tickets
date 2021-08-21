@@ -16,13 +16,13 @@ class Controller extends AbstractController
     // Метод для поиска можно определить в EntityRepository
     // $orders = $entityRepository->findAllByMonth()
 
-    // $labels - список названий всех элементов
+    // $labels - список названий всех продуктов
     // foreach ($orders as $order) { $labels[] = $order->getName()}
     $labels = ['Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6'];
 
     // $data - продолжительность всех броней в формате Unix time, умноженных на 1000, т.к.
     // JS, в отличии от PHP, считает время в милисекундах. Каждый элемент массива $data - массив,
-    // первый элемент которого, дата начала аренды, второй - дата окончания
+    // первый элемент которого - дата начала аренды, второй - дата окончания
     // foreach ($orders as $order) {...}
     // { $data[] = [strtotime($order->getStartDate()) * 1000, strtotime($order->getStartDate()) * 1000] }
 
