@@ -27,8 +27,8 @@ class TicketCheckDateCommand extends Command
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $this->service->expiredBooking();
     $this->service->expiringBooking();
+    $this->service->expiredBooking();
     $this->service->leftUntilFlight();
 
     $output->writeln('Notifications have been made');
