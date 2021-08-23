@@ -103,7 +103,10 @@ class TicketController extends AbstractController
         $notification = new Notification();
         $notification->setType('email');
         $notification->setUser($user);
+        $notification->setTicket($ticket);
+        $notification->setSubject('bought');
         $notification->setContent('You\'ve successfully bought the ticket to flight #' . $flight->getId() . '!');
+        $notification->setStatus('NOT_SENT');
         $em->persist($notification);
 
         $em->flush();
@@ -145,7 +148,10 @@ class TicketController extends AbstractController
       $notification = new Notification();
       $notification->setType('email');
       $notification->setUser($user);
+      $notification->setTicket($ticket);
+      $notification->setSubject('booked');
       $notification->setContent('You\'ve successfully booked the ticket to flight #' . $flight->getId() . '!');
+      $notification->setStatus('NOT_SENT');
       $em->persist($notification);
 
       $em->flush();
@@ -195,9 +201,12 @@ class TicketController extends AbstractController
         $notification = new Notification();
         $notification->setType('email');
         $notification->setUser($user);
+        $notification->setTicket($ticket);
+        $notification->setSubject('bought');
         $notification->setContent(
           'You\'ve successfully bought the ticket to flight #' . $ticket->getFlight()->getId() . '!'
         );
+        $notification->setStatus('NOT_SENT');
         $em->persist($notification);
 
         $em->flush();
@@ -243,7 +252,9 @@ class TicketController extends AbstractController
         $notification = new Notification();
         $notification->setType('email');
         $notification->setUser($user);
+        $notification->setSubject('gotten back');
         $notification->setContent('You\'ve successfully gotten back the ticket #' . $ticket->getId() . '!');
+        $notification->setStatus('NOT_SENT');
         $em->persist($notification);
 
         $em->remove($ticket);
