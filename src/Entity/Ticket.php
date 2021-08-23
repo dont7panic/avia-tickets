@@ -6,6 +6,7 @@ use App\Repository\TicketRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -55,9 +56,8 @@ class Ticket
    */
   private $notifications;
 
-  public function __construct()
-  {
-      $this->notifications = new ArrayCollection();
+  public function __construct() {
+    $this->notifications = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -115,6 +115,34 @@ class Ticket
   }
 
   /**
+   * @ORM\PreRemove
+   */
+
+  public function clearNotifications(LifecycleEventArgs $args): void {
+    foreach ($this->getNotifications() as $notification) {
+      $this->removeNotification($notification);
+    }
+  }
+
+  /**
+   * @return Collection|Notification[]
+   */
+  public function getNotifications(): Collection {
+    return $this->notifications;
+  }
+
+  public function removeNotification(Notification $notification): self {
+    if ($this->notifications->removeElement($notification)) {
+      // set the owning side to null (unless already changed)
+      if ($notification->getTicket() === $this) {
+        $notification->setTicket(null);
+      }
+    }
+
+    return $this;
+  }
+
+  /**
    * @ORM\PrePersist
    */
 
@@ -130,33 +158,12 @@ class Ticket
     $this->setUpdatedAt(new DateTimeImmutable('now'));
   }
 
-  /**
-   * @return Collection|Notification[]
-   */
-  public function getNotifications(): Collection
-  {
-      return $this->notifications;
-  }
+  public function addNotification(Notification $notification): self {
+    if (!$this->notifications->contains($notification)) {
+      $this->notifications[] = $notification;
+      $notification->setTicket($this);
+    }
 
-  public function addNotification(Notification $notification): self
-  {
-      if (!$this->notifications->contains($notification)) {
-          $this->notifications[] = $notification;
-          $notification->setTicket($this);
-      }
-
-      return $this;
-  }
-
-  public function removeNotification(Notification $notification): self
-  {
-      if ($this->notifications->removeElement($notification)) {
-          // set the owning side to null (unless already changed)
-          if ($notification->getTicket() === $this) {
-              $notification->setTicket(null);
-          }
-      }
-
-      return $this;
+    return $this;
   }
 }

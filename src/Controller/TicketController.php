@@ -255,14 +255,19 @@ class TicketController extends AbstractController
         $notification->setSubject('gotten back');
         $notification->setContent('You\'ve successfully gotten back the ticket #' . $ticket->getId() . '!');
         $notification->setStatus('NOT_SENT');
+
         $em->persist($notification);
-
-        $em->remove($ticket);
-
         $em->flush();
 
         $dispatcher->addSubscriber(new TicketSubscriber());
         $dispatcher->dispatch(new BoughtTicketCancelledEvent($ticket), BoughtTicketCancelledEvent::NAME);
+
+        foreach ($ticket->getNotifications() as $notification) {
+          $ticket->removeNotification($notification);
+        }
+
+        $em->remove($ticket);
+        $em->flush();
 
         $em->getConnection()->commit();
 
