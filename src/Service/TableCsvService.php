@@ -6,13 +6,16 @@ use DateTimeImmutable;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\TestPlane;
+use Doctrine\Persistence\ObjectManager;
 
 class TableCsvService
 {
-  private $em;
+  private ObjectManager $em;
+  private string $projectDir;
 
-  public function __construct(ManagerRegistry $registry) {
+  public function __construct(ManagerRegistry $registry, string $projectDir) {
     $this->em = $registry->getManager();
+    $this->projectDir = $projectDir;
   }
 
   public function exportTable($class, $path = null) {
@@ -24,8 +27,8 @@ class TableCsvService
 
     $tableName = strtolower(str_replace('App\Entity\\', '', $repository->getClassName()));
     $fileName = date('Ymd_His_', strtotime('now')) . $tableName . '.csv';
-    $defaultPath = __DIR__ . '/../../public/uploads/csv/' . $fileName;
-    $finalPath = __DIR__ . '/../../' . $path . $fileName ?? $defaultPath;
+    $defaultPath = $this->projectDir . '/public/uploads/csv/' . $fileName;
+    $finalPath = $this->projectDir . '/' . $path . $fileName ?? $defaultPath;
 
     $fp = fopen($finalPath, 'w+');
 
@@ -45,7 +48,7 @@ class TableCsvService
   }
 
   public function importTable(string $path) {
-    $finalPath = __DIR__ . '/../../' . $path;
+    $finalPath = $this->projectDir . '/' . $path;
 
     if ($fp = fopen($finalPath, 'r')) {
 
